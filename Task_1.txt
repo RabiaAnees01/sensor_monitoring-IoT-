@@ -1,0 +1,45 @@
+#include <LiquidCrystal.h>
+
+// Pins based on your image: RS=12, E=11, D4=5, D5=4, D6=3, D7=2
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+const int sensorPin = A0; 
+
+void setup() {
+  // Start the LCD
+  lcd.begin(16, 2);
+  
+  // --- LCD TEST START ---
+  // If you don't see this text, rotate your blue potentiometer!
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("System Loading");
+  lcd.setCursor(0, 1);
+  lcd.print("Testing LCD...");
+  delay(2000); 
+  lcd.clear();
+  // --- LCD TEST END ---
+}
+
+void loop() {
+  // 1. Get raw data from A0
+  int reading = analogRead(sensorPin);
+  
+  // 2. Convert to Voltage (5.0V / 1024 units)
+  float voltage = reading * (5.0 / 1024.0); 
+
+  // 3. Convert Voltage to Celsius (TMP36 formula)
+  float temperatureC = (voltage - 0.5) * 100;
+
+  // 4. Update LCD Screen
+  lcd.setCursor(0, 0);
+  lcd.print("TEMP MONITOR    "); // Spaces at end clear old characters
+  
+  lcd.setCursor(0, 1);
+  lcd.print("Value: ");
+  lcd.print(temperatureC, 1); // Display with 1 decimal place
+  lcd.print((char)223);       // Degree symbol
+  lcd.print("C   ");          // Extra spaces to prevent flickering
+
+  delay(500); // Faster update (twice per second)
+}
